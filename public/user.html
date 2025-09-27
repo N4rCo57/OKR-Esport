@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes OKR - Esport Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .user-name {
+            font-size: 2rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .add-okr-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .add-okr-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .okr-list {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .okr-list-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .okr-list-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .okr-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.3s ease;
+        }
+
+        .okr-item:last-child {
+            border-bottom: none;
+        }
+
+        .okr-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .okr-item.completed {
+            background-color: #d4edda;
+        }
+
+        .okr-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .okr-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+
+        .okr-details {
+            flex-grow: 1;
+        }
+
+        .okr-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .okr-item.completed .okr-title {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .okr-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .okr-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .okr-type {
+            background: #e9ecef;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .okr-type.daily {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .okr-type.weekly {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .okr-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                text-align: center;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .okr-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .okr-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"></div>
+                <h1 class="user-name" id="userName">Chargement...</h1>
+            </div>
+            
+            <div class="controls">
+                <div>
+                    <a href="/" class="btn btn-secondary">← Accueil</a>
+                    <a href="/dashboard" class="btn btn-primary">📊 Dashboard</a>
+                </div>
+                <div>
+                    <button id="addOkrBtn" class="btn btn-success">+ Nouvel OKR</button>
+                    <button id="refreshBtn" class="btn btn-primary">🔄 Actualiser</button>
+                </div>
+            </div>
+
+            <div class="stats" id="userStats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOkrs">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedOkrs">0</div>
+                    <div class="stat-label">Terminés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="progressPercent">0%</div>
+                    <div class="stat-label">Progression</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-okr-form" id="addOkrForm">
+            <h3 style="margin-bottom: 1.5rem; color: #333;">Créer un nouvel OKR</h3>
+            <form id="okrForm">
+                <div class="form-group">
+                    <label for="okrTitle">Titre de l'objectif *</label>
+                    <input type="text" id="okrTitle" name="title" required placeholder="Ex: Terminer 10 parties classées">
+                </div>
+                <div class="form-group">
+                    <label for="okrDescription">Description (optionnel)</label>
+                    <textarea id="okrDescription" name="description" rows="3" placeholder="Détails sur l'objectif..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="okrType">Type d'objectif</label>
+                    <select id="okrType" name="type">
+                        <option value="daily">Journalier</option>
+                        <option value="weekly">Hebdomadaire</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="btn btn-secondary">Annuler</button>
+                    <button type="submit" class="btn btn-success">Créer l'OKR</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="okr-list">
+            <div class="okr-list-header">
+                <h2 class="okr-list-title">Mes OKR</h2>
+            </div>
+            <div id="okrListContent" class="loading">
+                Chargement des OKR...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = null;
+        let currentUser = null;
+
+        // Récupérer l'ID utilisateur depuis l'URL
+        function getUserIdFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/user\/(\d+)/);
+            return match ? parseInt(match[1]) : null;
+        }
+
+        // Charger les informations utilisateur
+        async function loadUser() {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                
+                currentUserId = getUserIdFromUrl();
+                if (!currentUserId) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                currentUser = users.find(u => u.id === currentUserId);
+                if (!currentUser) {
+                    document.getElementById('userName').textContent = 'Utilisateur non trouvé';
+                    return;
+                }
+
+                document.getElementById('userName').textContent = currentUser.name;
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                avatar.style.backgroundColor = currentUser.color;
+                
+                document.title = `${currentUser.name} - OKR Esport`;
+
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'utilisateur:', error);
+                document.getElementById('userName').textContent = 'Erreur de chargement';
+            }
+        }
+
+        // Charger les OKR de l'utilisateur
+        async function loadOkrs() {
+            if (!currentUserId) return;
+
+            try {
+                const response = await fetch(`/api/users/${currentUserId}/okrs`);
+                const okrs = await response.json();
+                
+                const content = document.getElementById('okrListContent');
+                
+                if (okrs.length === 0) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🎯</div>
+                            <h3>Aucun OKR pour le moment</h3>
+                            <p>Créez votre premier objectif pour commencer !</p>
+                        </div>
+                    `;
+                    updateStats(0, 0);
+                    return;
+                }
+
+                const completedCount = okrs.filter(okr => okr.completed).length;
+                updateStats(okrs.length, completedCount);
+
+                content.innerHTML = okrs.map(okr => `
+                    <div class="okr-item ${okr.completed ? 'completed' : ''}">
+                        <div class="okr-content">
+                            <input type="checkbox" 
+                                   class="okr-checkbox" 
+                                   ${okr.completed ? 'checked' : ''} 
+                                   onchange="toggleOkr(${okr.id})">
+                            <div class="okr-details">
+                                <div class="okr-title">${okr.title}</div>
+                                ${okr.description ? `<div class="okr-description">${okr.description}</div>` : ''}
+                                <div class="okr-meta">
+                                    <span class="okr-type ${okr.type}">${okr.type === 'daily' ? 'Journalier' : 'Hebdomadaire'}</span>
+                                    <span>Créé le ${new Date(okr.created_at).toLocaleDateString('fr-FR')}</span>
+                                    ${okr.completed_at ? `<span>Terminé le ${new Date(okr.completed_at).toLocaleDateString('fr-FR')}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="okr-actions">
+                                <button class="btn btn-danger btn-sm" onclick="deleteOkr(${okr.id})">
+                                    🗑️ Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Erreur lors du chargement des OKR:', error);
+                document.getElementById('okrListContent').innerHTML = 
+                    '<div class="error">Erreur lors du chargement des OKR</div>';
+            }
+        }
+
+        // Mettre à jour les statistiques
+        function updateStats(total, completed) {
+            document.getElementById('totalOkrs').textContent = total;
+            document.getElementById('completedOkrs').textContent = completed;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('progressPercent').textContent = `${percentage}%`;
+        }
+
+        // Basculer le statut d'un OKR
+        async function toggleOkr(okrId) {
+            try {
+                const response = await fetch(`/api/okrs/${okrId}/toggle`, {
+                    method: 'PATCH'
+                });
+
+                if (response.ok) {
+                    loadOkrs(); // Recharger la liste
+                    showMessage('OKR mis à jour avec succès !', 'success');
+                } else {
+                    throw new Error('Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour de l\'OKR:', error);
+                showMessage('Erreur lors de la mise à jour', 'error');
+                loadOkrs(); // Recharger pour annuler le changement visuel
+            }
+        }
+
+        // Supprimer un OKR
+        async function deleteOkr(okrId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet OKR ?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/okrs/${okrId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadOkrs(); // Recharger la liste
+                    showMessage('OKR supprimé avec succès !', 'success');
+                } else {
+                    throw new Error('Erreur lors de la suppression');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'OKR:', error);
+                showMessage('Erreur lors de la suppression', 'error');
+            }
+        }
+
+        // Créer un nouvel OKR
+        async function createOkr(formData) {
+            try {
+                const response = await fetch(`/api/users/${currentUserId}/okrs`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    document.getElementById('okrForm').reset();
+                    document.getElementById('addOkrForm').classList.remove('active');
+                    loadOkrs(); // Recharger la liste
+                    showMessage('OKR créé avec succès !', 'success');
+                } else {
+                    throw new Error('Erreur lors de la création');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la création de l\'OKR:', error);
+                showMessage('Erreur lors de la création', 'error');
+            }
+        }
+
+        // Afficher un message
+        function showMessage(text, type) {
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(message, container.firstChild);
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        // Gestionnaires d'événements
+        document.getElementById('addOkrBtn').addEventListener('click', () => {
+            document.getElementById('addOkrForm').classList.add('active');
+            document.getElementById('okrTitle').focus();
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('addOkrForm').classList.remove('active');
+            document.getElementById('okrForm').reset();
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', loadOkrs);
+
+        document.getElementById('okrForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('okrTitle').value,
+                description: document.getElementById('okrDescription').value,
+                type: document.getElementById('okrType').value
+            };
+
+            createOkr(formData);
+        });
+
+        // Initialisation
+        loadUser().then(() => {
+            loadOkrs();
+        });
+
+        // Actualisation automatique toutes les 2 minutes
+        setInterval(loadOkrs, 120000);
+    </script>
+</body>
+</html>
