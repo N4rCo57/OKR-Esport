@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKR Esport Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .users-list {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            background: #f8f9fa;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .user-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .user-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 OKR Esport</h1>
+        <p class="subtitle">Plateforme collaborative de gestion des objectifs</p>
+
+        <div class="nav-buttons">
+            <a href="/dashboard" class="btn btn-primary">
+                📊 Dashboard Global
+            </a>
+            <a href="/dashboard?fullscreen=1" class="btn btn-secondary">
+                📺 Mode TV (Plein écran)
+            </a>
+        </div>
+
+        <div class="users-list">
+            <h3 style="margin-bottom: 1rem; color: #333;">Espaces personnels :</h3>
+            <div id="usersList" class="loading">Chargement des utilisateurs...</div>
+        </div>
+    </div>
+
+    <script>
+        // Charger la liste des utilisateurs
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                
+                const usersList = document.getElementById('usersList');
+                usersList.innerHTML = '';
+
+                users.forEach(user => {
+                    const userItem = document.createElement('a');
+                    userItem.className = 'user-item';
+                    userItem.href = `/user/${user.id}`;
+                    
+                    userItem.innerHTML = `
+                        <div class="user-color" style="background-color: ${user.color}"></div>
+                        <span>${user.name}</span>
+                    `;
+                    
+                    usersList.appendChild(userItem);
+                });
+            } catch (error) {
+                console.error('Erreur lors du chargement des utilisateurs:', error);
+                document.getElementById('usersList').innerHTML = 'Erreur de chargement';
+            }
+        }
+
+        // Charger au démarrage
+        loadUsers();
+    </script>
+</body>
+</html>
